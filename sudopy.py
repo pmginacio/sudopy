@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; -*-
+"""Solve a sudoky puzzle
+
+Given a string which represent a sudoku puzzle, sudopy will output the solved 
+puzzle.
+"""
+
+__author__ = "Pedro Inácio"
+__copyright__ = "Copyright 2015"
+__version__ = "1.0"
+__maintainer__ = "Pedro Inácio"
+__email__ = "pedro@inacio.space"
+__status__ = "Development"
+
+# Load modules
 import re
 import argparse
 import itertools
@@ -14,7 +30,8 @@ class Sudoku(object):
 
 	def __init__(self, sud):
 		"""Constructor, recieves a string with a sudoku puzzle and builds the
-		corresponding sudoku board."""
+		corresponding sudoku board.
+		"""
 		super(Sudoku, self).__init__()
 
 		# build the board
@@ -61,18 +78,28 @@ class Sudoku(object):
 		"""
 		out=''
 		item = 0
-		for row in range(9):
-			for col in range(9):
 
-				if row > 0 and col == 0:
-					out += '\n'
+		out += '-'*23+'\n'
+		for row in range(9):
+			out += '|'
+			for col in range(9):
 
 				cell = self.Board[row][col]
 				if len(cell) == 1:
 					for n in cell:
-						out += n
+						out += '|'+n
 				else:
-					out += ' '
+					out += '| '
+
+				if col == 8:
+					out += '||\n'
+
+				if col == 2 or col == 5:
+				 	out += '|'
+
+			if (row+1)%3 == 0:
+				out += '-'*23+'\n'
+
 		return out
 
 	def set(self,row,col,c):
@@ -112,7 +139,7 @@ class Sudoku(object):
 				idxs = list()
 				[idxs.append(x) for x in range(9) if len(g[x]) >= n]
 
-				# if found less that n cells, then continue
+				# if found less that n cells, then continue to next group
 				if len(idxs) < n:
 					continue
 
@@ -128,15 +155,14 @@ class Sudoku(object):
 					# find the intersection and 
 					itsc = self.NSET.copy()
 					[itsc.intersection_update(x) for x in A]
+
 					# check that there are at least n numbers in the intersection
 					if len(itsc) < n:
 						continue
-					# print n,itsc
 
 					# now loop all n-element combinations of the intersection
 					for aux in itertools.combinations(itsc,n):
 						subset = set(aux)
-						# print n,itsc,subset
 					
 						# check that each n-element subset of the intersection 
 						# does not exist in any of the the other cells
@@ -167,15 +193,11 @@ class Sudoku(object):
 							for cell in notA:
 								cell.difference_update(subset)
 								change_flag = True
-#			__=raw_input('')
-#			print self.print_poss()
 
 		return change_flag
 
-	def print_poss(self):
-		""" 
-		Print the board with all the possibilities.
-		"""
+	def _print_poss(self):
+		"""Print the board with all the possibilities"""
 		out=''
 		item = 0
 		out += '-'*37+'\n'
@@ -207,21 +229,31 @@ def parse_args():
 
 	# Define the input parser
 	desc = "Solve a sudoku puzzle"
-	epilog = """TODO"""
+	epilog = """The single input argument specifies either a filename or a 
+	string representation of a sudoku board. If a filename is given, the a string
+	representation of the sudoku board is read from the contents of the file.
+
+	A string representation is any collection of digits, where digits 1 to 9 
+	represent the values of the respective cells. The board is read row by row,
+	such that the 10-th digit in the string corresponds to the first element of
+	the second row of the board.
+	Zeros or spaces represent cells which have no value atributed.
+	Other characters including newlines are discarded.
+	"""
 
 	parser = argparse.ArgumentParser(description=desc, epilog=epilog)
-	parser.add_argument("sud",help="string with sudoku puzzle")
+	parser.add_argument("sud",help="filename or string representing sudoku puzzle")
 
 	return parser.parse_args()
 
 
 def main():
-	"""Parse input arguments"""
+	"""Parse input arguments, build the sudoku board, solve it and print it"""
 
-	# Build parser and parse the input arguments
+	# build parser and parse the input arguments
 	args = parse_args()
 
-	# Check if it is a file
+	# check if it is a file
 	if path.isfile(args.sud):
 		# load file as a string
 		with open(args.sud,'r') as f:
@@ -230,16 +262,16 @@ def main():
 	else:
 		sudstr = args.sud
 
-	# Build the sudoku puzzle data structure
+	# build the sudoku puzzle data structure
 	sud = Sudoku(sudstr)
 
-	print sud.print_poss()
+	# loop until solved or until no changes have been made
 	while sud.solve():
-		print "Something changed!"
-		print sud.print_poss()
-		print sud
-	print sud.print_poss()
+		pass
 
-#This idiom means the below code only runs when executed from command line
+	# print the board
+	print sud
+
+# This idiom means the below code only runs when executed from command line
 if __name__ == '__main__':
 	main()
