@@ -35,6 +35,7 @@ After a few iterations of this algorithm the board will be solved.
 
 ## An example
 Let's look at a hypothetical group of cells, name A to I, and their possible values:
+
 | Cell | Possibilities |
 | ---- | ------------- |
 | A    | 14569 		   |
@@ -51,10 +52,11 @@ Let's start with the obvious cases.
 Cells CD only have one possible value, i.e., they are solved.
 Therefore, values (8,9) must be discarded from the list of possibilities in the remaining cells.
 Looking back at the algorithm, CD are cases of 1-cell group S with 1-possiblity P which are the only possibility of S, therefore all !S must be discarded of their P possibilities.
+
 | Cell | Possibilities | Discarded |
 | ---- | ------------- | --------- |
 | A    | 1456          | 9         |
-| B    | 145       	   | 9         |
+| B    | 145       	| 9         |
 | C    | 9             |           |
 | D    | 8             |           |
 | E    | 167           |           |      	
@@ -68,6 +70,7 @@ In fact, these are the only two cells with 2 or 3.
 Therefore, 2 and 3 must be place in GH, and other possible values for cells GH can be discarded.
 Referring to the algorithm, GH is a 2-cell group S with a 2-element intersection P which are only found in S.
 Therefore, P must be the list of possibilities for all cells in S.
+
 | Cell | Possibilities | Discarded |
 | ---- | ------------- | --------- |
 | A    | 1456          |           |
